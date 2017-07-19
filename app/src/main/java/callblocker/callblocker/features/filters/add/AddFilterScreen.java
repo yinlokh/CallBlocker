@@ -1,11 +1,12 @@
 package callblocker.callblocker.features.filters.add;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
 import com.wealthfront.magellan.Screen;
 
+import callblocker.callblocker.R;
+import callblocker.callblocker.core.MainActivity;
 import callblocker.callblocker.core.PhoneNumberChecker;
 import callblocker.callblocker.database.FilterListStore;
 import callblocker.callblocker.models.FilterRule;
@@ -14,7 +15,7 @@ import io.reactivex.functions.Consumer;
 
 public class AddFilterScreen extends Screen<AddFilterView> {
 
-    private Disposable addClicksSubscription;
+    private Disposable fabClicksSubscription;
     private Disposable testPhoneNumbersSubscription;
 
     @Override
@@ -32,31 +33,32 @@ public class AddFilterScreen extends Screen<AddFilterView> {
         super.onShow(context);
 
         final FilterListStore filterListStore = new FilterListStore(context);
-        addClicksSubscription = getView().addButtonClicks().subscribe(new Consumer<Object>() {
+
+        testPhoneNumbersSubscription = getView().changes().subscribe(new Consumer<Object>() {
             @Override
-            public void accept(Object o) throws Exception {
-                filterListStore.addFilterEntry(getRuleFromFields());
-                getNavigator().goBack();
-            }
-        });
-        testPhoneNumbersSubscription = getView().testPhoneNumbers().subscribe(new Consumer<String>() {
-            @Override
-            public void accept(String s) throws Exception {
+            public void accept(Object unused) throws Exception {
                 boolean blocked = new PhoneNumberChecker(ImmutableList.of(getRuleFromFields()))
-                        .shouldBlockNumber(s);
-                if (blocked) {
-                    Toast.makeText(context, "Blocked", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Not Blocked", Toast.LENGTH_SHORT).show();
-                }
+                        .shouldBlockNumber(getView().getTestPhoneNumber());
+                getView().setTestPassed(blocked);
             }
         });
+
+        MainActivity activity = (MainActivity) getActivity();
+        activity.showFloatingActionButton(R.drawable.content_save);
+        fabClicksSubscription = activity.floatingActionButtonClicks().subscribe(
+                new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        filterListStore.addFilterEntry(getRuleFromFields());
+                        getNavigator().goBack();
+                    }
+                });
     }
 
     @Override
     protected void onHide(Context context) {
         super.onHide(context);
-        addClicksSubscription.dispose();
+        fabClicksSubscription.dispose();
         testPhoneNumbersSubscription.dispose();
     }
 

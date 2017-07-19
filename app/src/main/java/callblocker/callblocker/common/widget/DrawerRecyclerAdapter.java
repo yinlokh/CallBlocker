@@ -32,6 +32,7 @@ public class DrawerRecyclerAdapter extends
     public void onBindViewHolder(DrawerRecyclerViewHolder viewHolder, int i) {
         final DrawerOption drawerOption = drawerOptions.get(i);
         viewHolder.drawerOptionView.setTitle(drawerOption.title());
+        viewHolder.drawerOptionView.setIcon(drawerOption.iconResId());
         viewHolder.drawerOptionView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

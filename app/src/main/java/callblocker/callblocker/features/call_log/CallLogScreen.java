@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.wealthfront.magellan.Screen;
 
+import callblocker.callblocker.core.MainActivity;
+
 public class CallLogScreen extends Screen<CallLogView> {
 
     @Override
@@ -19,5 +21,7 @@ public class CallLogScreen extends Screen<CallLogView> {
     @Override
     protected void onShow(Context context) {
         super.onShow(context);
+
+        ((MainActivity) getActivity()).hideFloatingActionButton();
     }
 }

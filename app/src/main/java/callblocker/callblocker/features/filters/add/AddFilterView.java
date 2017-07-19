@@ -12,9 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.wealthfront.magellan.Screen;
 import com.wealthfront.magellan.ScreenView;
 
@@ -22,15 +24,16 @@ import callblocker.callblocker.R;
 import callblocker.callblocker.models.FilterType;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
+import io.reactivex.subjects.PublishSubject;
 
 public class AddFilterView extends FrameLayout implements ScreenView {
 
     private Screen screen;
     private Spinner filterTypeSpinner;
     private EditText valueEditText;
-    private Button addRuleButton;
     private EditText phoneNumberEditText;
-    private Button testRuleButton;
+    private ImageView testPassIndicator;
+    private PublishSubject<Object> spinnerChanges = PublishSubject.create();
 
     public AddFilterView(@NonNull Context context) {
         this(context, null, 0);
@@ -58,6 +61,8 @@ public class AddFilterView extends FrameLayout implements ScreenView {
                 } else {
                     valueEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 }
+
+                spinnerChanges.onNext(new Object());
             }
 
             @Override
@@ -66,9 +71,8 @@ public class AddFilterView extends FrameLayout implements ScreenView {
             }
         });
         valueEditText = (EditText) findViewById(R.id.value);
-        addRuleButton = (Button) findViewById(R.id.add_button);
         phoneNumberEditText = (EditText) findViewById(R.id.phone_number);
-        testRuleButton = (Button) findViewById(R.id.test_button);
+        testPassIndicator = (ImageView) findViewById(R.id.test_indicator);
     }
 
     @Override
@@ -81,17 +85,21 @@ public class AddFilterView extends FrameLayout implements ScreenView {
         return screen;
     }
 
-    public Observable<Object> addButtonClicks() {
-        return RxView.clicks(addRuleButton);
-    }
-
-    public Observable<String> testPhoneNumbers() {
-        return RxView.clicks(testRuleButton).map(new Function<Object, String>() {
-            @Override
-            public String apply(Object o) throws Exception {
-                return phoneNumberEditText.getText().toString();
-            }
-        });
+    public Observable<Object> changes() {
+        return Observable.merge(
+                RxTextView.textChanges(valueEditText).map(new Function<CharSequence, Object>() {
+                    @Override
+                    public Object apply(CharSequence charSequence) throws Exception {
+                        return new Object();
+                    }
+                }),
+                RxTextView.textChanges(phoneNumberEditText).map(new Function<CharSequence, Object>() {
+                    @Override
+                    public Object apply(CharSequence charSequence) throws Exception {
+                        return new Object();
+                    }
+                }),
+                spinnerChanges);
     }
 
     public FilterType getFilterType() {
@@ -100,5 +108,16 @@ public class AddFilterView extends FrameLayout implements ScreenView {
 
     public String getValue() {
         return valueEditText.getText().toString();
+    }
+
+    public String getTestPhoneNumber() {
+        return phoneNumberEditText.getText().toString();
+    }
+
+    public void setTestPassed(boolean passed) {
+        boolean hasValidText =
+                valueEditText.getText().length() > 0 && getTestPhoneNumber().length() > 0;
+        testPassIndicator.setVisibility(hasValidText ? VISIBLE : INVISIBLE);
+        testPassIndicator.setImageResource(passed ? R.drawable.check : R.drawable.close);
     }
 }

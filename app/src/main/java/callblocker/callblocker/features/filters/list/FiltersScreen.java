@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.wealthfront.magellan.Screen;
 
+import callblocker.callblocker.R;
+import callblocker.callblocker.core.MainActivity;
 import callblocker.callblocker.database.FilterListStore;
 import callblocker.callblocker.features.filters.add.AddFilterScreen;
 import callblocker.callblocker.models.FilterRule;
@@ -12,8 +14,8 @@ import io.reactivex.functions.Consumer;
 
 public class FiltersScreen extends Screen<FiltersView> {
 
-    Disposable addClicksSubscription;
     Disposable deleteClicksSubscription;
+    Disposable fabClicksSubscription;
 
     @Override
     protected FiltersView createView(Context context) {
@@ -31,12 +33,6 @@ public class FiltersScreen extends Screen<FiltersView> {
 
         final FilterListStore filterListStore = new FilterListStore(context);
         getView().setFilterRules(filterListStore.getFilterEntries());
-        addClicksSubscription = getView().addButtonClicks().subscribe(new Consumer<Object>() {
-            @Override
-            public void accept(Object o) throws Exception {
-                getNavigator().goTo(new AddFilterScreen());
-            }
-        });
         deleteClicksSubscription = getView().ruleDeletionClicks().subscribe(new Consumer<FilterRule>() {
             @Override
             public void accept(FilterRule filterRule) throws Exception {
@@ -44,12 +40,25 @@ public class FiltersScreen extends Screen<FiltersView> {
                 getView().setFilterRules(filterListStore.getFilterEntries());
             }
         });
+
+        MainActivity activity = (MainActivity) getActivity();
+        activity.showFloatingActionButton(R.drawable.plus);
+        fabClicksSubscription = activity.floatingActionButtonClicks()
+                .subscribe(new Consumer<Object>() {
+                    @Override
+                    public void accept(Object o) throws Exception {
+                        getNavigator().goTo(new AddFilterScreen());
+                    }
+                });
     }
 
     @Override
     protected void onHide(Context context) {
         super.onHide(context);
-        addClicksSubscription.dispose();
         deleteClicksSubscription.dispose();
+        fabClicksSubscription.dispose();
+
+        MainActivity activity = (MainActivity) getActivity();
+        activity.hideFloatingActionButton();
     }
 }

@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import callblocker.callblocker.R;
 
 public class DrawerOptionView extends FrameLayout {
 
+    private ImageView icon;
     private TextView textView;
 
     public DrawerOptionView(@NonNull Context context) {
@@ -26,11 +28,16 @@ public class DrawerOptionView extends FrameLayout {
     public DrawerOptionView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        View child = inflate(context, R.layout.drawer_option_view, this);
+        inflate(context, R.layout.drawer_option_view, this);
+        icon = (ImageView) findViewById(R.id.icon);
         textView = (TextView) findViewById(R.id.title);
     }
 
     public void setTitle(String title) {
         textView.setText(title);
+    }
+
+    public void setIcon(int resId) {
+        icon.setImageResource(resId);
     }
 }
