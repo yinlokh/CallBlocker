@@ -18,12 +18,13 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
         try {
             CallHistoryStore callHistoryStore = new CallHistoryStore(context);
             FilterListStore filterListStore = new FilterListStore(context);
+            CallBlockerPreferences preferences = new CallBlockerPreferences(context);
             PhoneNumberChecker phoneNumberChecker = new PhoneNumberChecker(filterListStore.getFilterEntries());
             ContactsChecker contactsChecker = new ContactsChecker(context);
             String stateStr = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
             String incomingNumber = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
             boolean shouldBlock = phoneNumberChecker.shouldBlockNumber(incomingNumber)
-                    && !contactsChecker.phoneIsInContacts(incomingNumber);
+                    && (!preferences.getWhitelistAllContacts() || contactsChecker.phoneIsInContacts(incomingNumber));
             if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                 callHistoryStore.addCallHistory(
                         CallHistory.create(System.currentTimeMillis(), incomingNumber, shouldBlock));

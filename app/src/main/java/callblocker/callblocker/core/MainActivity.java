@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.wealthfront.magellan.NavigationType;
@@ -17,10 +18,12 @@ import com.wealthfront.magellan.Screen;
 import com.wealthfront.magellan.ScreenLifecycleListener;
 
 import java.util.List;
+import java.util.Set;
 
 import callblocker.callblocker.R;
 import callblocker.callblocker.features.call_log.CallLogScreen;
 import callblocker.callblocker.features.filters.list.FiltersScreen;
+import callblocker.callblocker.features.settings.SettingsScreen;
 import callblocker.callblocker.models.DrawerOption;
 import callblocker.callblocker.common.widget.DrawerRecyclerAdapter;
 import io.reactivex.Observable;
@@ -30,9 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final DrawerOption DRAWER_OPTION_CALL_LOG = DrawerOption.create("Call Log", R.drawable.phone);
     private static final DrawerOption DRAWER_OPTION_FILTERS = DrawerOption.create("Filters", R.drawable.filter);
+    private static final DrawerOption DRAWER_OPTION_SETTINGS = DrawerOption.create("Settings", R.drawable.settings);
     private static final List<DrawerOption> DRAWER_OPTIONS = ImmutableList.<DrawerOption>builder()
             .add(DRAWER_OPTION_CALL_LOG)
             .add(DRAWER_OPTION_FILTERS)
+            .add(DRAWER_OPTION_SETTINGS)
             .build();
 
     private FloatingActionButton fab;
@@ -42,7 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView drawerRecycler;
     private Screen callLogScreen = new CallLogScreen();
     private Screen filtersScreen = new FiltersScreen();
+    private Screen settingsScreen = new SettingsScreen();
     private Navigator navigator = Navigator.withRoot(callLogScreen).build();
+    private Set<Screen> drawerEnabledScreens =
+            ImmutableSet.of(callLogScreen, filtersScreen, settingsScreen);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +148,9 @@ public class MainActivity extends AppCompatActivity {
         if (DRAWER_OPTION_CALL_LOG == drawerOption) {
             goToCallLog();
         } else if (DRAWER_OPTION_FILTERS == drawerOption) {
-            goToFilters();
+            goToSubscreen(filtersScreen);
+        } else if (DRAWER_OPTION_SETTINGS == drawerOption) {
+            goToSubscreen(settingsScreen);
         }
     }
 
@@ -151,16 +161,17 @@ public class MainActivity extends AppCompatActivity {
         navigator.goBackToRoot(NavigationType.GO);
     }
 
-    private void goToFilters() {
-        if (navigator.isCurrentScreen(filtersScreen)) {
+    private void goToSubscreen(Screen screen) {
+        if (navigator.isCurrentScreen(screen)) {
             return;
+        } else if (navigator.isCurrentScreen(callLogScreen)) {
+            navigator.goTo(screen);
+        } else {
+            navigator.replace(screen);
         }
-
-        navigator.goTo(filtersScreen);
     }
 
     private boolean drawerEnabled() {
-        return navigator.currentScreen() == callLogScreen
-                || navigator.currentScreen() == filtersScreen;
+        return drawerEnabledScreens.contains(navigator.currentScreen());
     }
 }
