@@ -4,15 +4,13 @@ import android.content.Context;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
-import com.jakewharton.rxbinding2.view.RxView;
 import com.wealthfront.magellan.Screen;
 import com.wealthfront.magellan.ScreenView;
 
@@ -39,10 +37,15 @@ public class FiltersView extends FrameLayout implements ScreenView {
 
     public FiltersView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        inflate(context, R.layout.filter_rules_screen, this);
+        inflate(context, R.layout.list_screen, this);
         emptyView = findViewById(R.id.empty_text_view);
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+        DividerItemDecoration decoration =
+                new DividerItemDecoration(context, DividerItemDecoration.VERTICAL);
+        decoration.setDrawable(getResources().getDrawable(R.drawable.divider));
+        recyclerView.addItemDecoration(decoration);
         recyclerView.setAdapter(filterRulesAdapter);
     }
 

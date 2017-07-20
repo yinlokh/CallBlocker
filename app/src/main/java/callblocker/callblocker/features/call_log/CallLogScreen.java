@@ -5,6 +5,7 @@ import android.content.Context;
 import com.wealthfront.magellan.Screen;
 
 import callblocker.callblocker.core.MainActivity;
+import callblocker.callblocker.database.CallHistoryStore;
 
 public class CallLogScreen extends Screen<CallLogView> {
 
@@ -23,5 +24,7 @@ public class CallLogScreen extends Screen<CallLogView> {
         super.onShow(context);
 
         ((MainActivity) getActivity()).hideFloatingActionButton();
+        CallHistoryStore callHistoryStore = new CallHistoryStore(context);
+        getView().setCallHistory(callHistoryStore.getCallHistory());
     }
 }

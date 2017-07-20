@@ -1,5 +1,10 @@
 package callblocker.callblocker.core;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract.PhoneLookup;
+
 import java.util.List;
 import java.util.regex.Pattern;
 

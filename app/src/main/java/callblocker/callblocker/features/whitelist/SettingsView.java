@@ -10,19 +10,19 @@ import android.widget.FrameLayout;
 import com.wealthfront.magellan.Screen;
 import com.wealthfront.magellan.ScreenView;
 
-public class WhitelistView extends FrameLayout implements ScreenView {
+public class SettingsView extends FrameLayout implements ScreenView {
 
     private Screen screen;
 
-    public WhitelistView(@NonNull Context context) {
+    public SettingsView(@NonNull Context context) {
         this(context, null, 0);
     }
 
-    public WhitelistView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public SettingsView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public WhitelistView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public SettingsView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setBackgroundColor(0xFF0000FF);
     }

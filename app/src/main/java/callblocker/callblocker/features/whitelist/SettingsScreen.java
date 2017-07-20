@@ -4,11 +4,11 @@ import android.content.Context;
 
 import com.wealthfront.magellan.Screen;
 
-public class WhitelistScreen extends Screen<WhitelistView> {
+public class SettingsScreen extends Screen<SettingsView> {
 
     @Override
-    protected WhitelistView createView(Context context) {
-        return new WhitelistView(context);
+    protected SettingsView createView(Context context) {
+        return new SettingsView(context);
     }
 
     @Override

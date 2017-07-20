@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
             public void onShow(Screen screen) {
                 toolbar.setTitle(screen.getTitle(MainActivity.this));
                 toolbar.setNavigationIcon(drawerEnabled() ? R.drawable.menu : R.drawable.arrow_left);
+                drawerLayout.setDrawerLockMode(drawerEnabled()
+                        ? DrawerLayout.LOCK_MODE_UNLOCKED
+                        : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             }
 
             @Override
@@ -92,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!navigator.handleBack()) {
+        if (drawerLayout.isDrawerOpen(findViewById(R.id.drawer))) {
+            drawerLayout.closeDrawers();
+        } else if (!navigator.handleBack()) {
             super.onBackPressed();
         }
     }

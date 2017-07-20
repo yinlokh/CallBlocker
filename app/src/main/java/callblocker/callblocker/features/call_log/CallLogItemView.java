@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -16,6 +17,7 @@ import callblocker.callblocker.models.CallHistory;
 
 public class CallLogItemView extends FrameLayout {
 
+    private final ImageView icon;
     private final TextView timeText;
     private final TextView phoneNumberText;
 
@@ -37,6 +39,7 @@ public class CallLogItemView extends FrameLayout {
         super(context, attrs, defStyleAttr);
 
         inflate(context, R.layout.call_log_item, this);
+        icon = (ImageView) findViewById(R.id.icon);
         timeText = (TextView) findViewById(R.id.time);
         phoneNumberText = (TextView) findViewById(R.id.phone_number);
     }
@@ -47,8 +50,8 @@ public class CallLogItemView extends FrameLayout {
         timeText.setText(sdf.format(resultdate));
         phoneNumberText.setText(callHistory.phoneNumber());
 
-        int color = callHistory.blocked() ? 0xFFFF0000 : 0xFF000000;
-        timeText.setTextColor(color);
-        phoneNumberText.setTextColor(color);
+        icon.setImageResource(callHistory.blocked()
+                ? R.drawable.call_missed
+                : R.drawable.call_received);
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="missed_call">#FFAA2200</color>
+    <color name="received_call">#FF22AA00</color>
+    <color name="space">#FFEEEEEE</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
