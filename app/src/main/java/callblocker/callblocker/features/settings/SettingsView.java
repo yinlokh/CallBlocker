@@ -76,6 +76,6 @@ public class SettingsView extends FrameLayout implements ScreenView {
     }
 
     public void setPauseBlockingToggleState(boolean toggled) {
-        whitelistContactsToggle.setChecked(toggled);
+        pauseBlockingToggle.setChecked(toggled);
     }
 }
