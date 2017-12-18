@@ -23,8 +23,13 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
             ContactsChecker contactsChecker = new ContactsChecker(context);
             String stateStr = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
             String incomingNumber = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
+            boolean whitelistedContact = preferences.getWhitelistAllContacts()
+                    && contactsChecker.phoneIsInContacts(incomingNumber);
             boolean shouldBlock = phoneNumberChecker.shouldBlockNumber(incomingNumber)
-                    && (!preferences.getWhitelistAllContacts() || contactsChecker.phoneIsInContacts(incomingNumber));
+                    && !whitelistedContact;
+            if (preferences.getPauseBlocking()) {
+                return;
+            }
             if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                 callHistoryStore.addCallHistory(
                         CallHistory.create(System.currentTimeMillis(), incomingNumber, shouldBlock));

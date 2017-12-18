@@ -45,7 +45,7 @@ public class FilterRuleItemView extends FrameLayout {
     }
 
     public void setFilterRule(FilterRule filterRule) {
-        typeText.setText(filterRule.filterType().name());
+        typeText.setText(filterRule.filterType().displayStringResId);
         valueText.setText(filterRule.value());
     }
 

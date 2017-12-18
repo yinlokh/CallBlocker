@@ -4,4 +4,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="filter_list_empty">You have no filters, press + button to add one.</string>
+    <string name="filter_type_exactly">Exactly</string>
+    <string name="filter_type_starts_with">Starts With</string>
+    <string name="filter_type_regex">Matches Regex</string>
+    <string name="settings_screen_whiteilst_contacts">whitelist all contacts</string>
+    <string name="settings_screen_pause_callblocking">pause blocking</string>
 </resources>

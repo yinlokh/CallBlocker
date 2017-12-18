@@ -9,13 +9,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.wealthfront.magellan.Screen;
 import com.wealthfront.magellan.ScreenView;
@@ -48,10 +46,16 @@ public class AddFilterView extends FrameLayout implements ScreenView {
 
         inflate(context, R.layout.add_filter_screen, this);
         filterTypeSpinner = (Spinner) findViewById(R.id.drop_down);
+
+        String filterDisplayNames[] = new String[FilterType.values().length];
+        for (int i = 0; i < FilterType.values().length; i++) {
+            FilterType filterType = FilterType.values()[i];
+            filterDisplayNames[i] = getResources().getString(filterType.displayStringResId);
+        }
         ArrayAdapter adapter = new ArrayAdapter<>(
                 context,
                 android.R.layout.simple_spinner_item,
-                FilterType.values());
+                filterDisplayNames);
         filterTypeSpinner.setAdapter(adapter);
         filterTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -103,7 +107,7 @@ public class AddFilterView extends FrameLayout implements ScreenView {
     }
 
     public FilterType getFilterType() {
-        return (FilterType) filterTypeSpinner.getSelectedItem();
+        return FilterType.values()[filterTypeSpinner.getSelectedItemPosition()];
     }
 
     public String getValue() {
