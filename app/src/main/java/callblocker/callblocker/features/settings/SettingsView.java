@@ -20,9 +20,7 @@ public class SettingsView extends FrameLayout implements ScreenView {
 
     private Screen screen;
     private Switch whitelistContactsToggle;
-    private Switch pauseBlockingToggle;
     private BehaviorSubject<Boolean> whitelistContactsToggleState = BehaviorSubject.create();
-    private BehaviorSubject<Boolean> pauseBlockingToggleState = BehaviorSubject.create();
 
     public SettingsView(@NonNull Context context) {
         this(context, null, 0);
@@ -36,19 +34,11 @@ public class SettingsView extends FrameLayout implements ScreenView {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.settings_screen, this);
         whitelistContactsToggle = (Switch) findViewById(R.id.whitelist_contacts_toggle);
-        pauseBlockingToggle = (Switch) findViewById(R.id.pause_blocking_toggle);
         whitelistContactsToggle.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                         whitelistContactsToggleState.onNext(b);
-                    }
-                });
-        pauseBlockingToggle.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        pauseBlockingToggleState.onNext(b);
                     }
                 });
     }
@@ -67,15 +57,7 @@ public class SettingsView extends FrameLayout implements ScreenView {
         return whitelistContactsToggleState;
     }
 
-    public Observable<Boolean> pauseBlockingsToggleChanges() {
-        return pauseBlockingToggleState;
-    }
-
     public void setWhitelistContactsToggleState(boolean toggled) {
         whitelistContactsToggle.setChecked(toggled);
-    }
-
-    public void setPauseBlockingToggleState(boolean toggled) {
-        pauseBlockingToggle.setChecked(toggled);
     }
 }

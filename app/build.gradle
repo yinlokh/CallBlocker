@@ -8,14 +8,15 @@ buildscript {
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "callblocker.callblocker"
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion 19
+        targetSdkVersion 28
         vectorDrawables.useSupportLibrary = true
         versionCode 1
         versionName "1.0"
@@ -33,14 +34,18 @@ android {
 
 dependencies {
     annotationProcessor 'com.google.auto.value:auto-value:1.2'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
-    compile 'com.jakewharton.rxbinding2:rxbinding-support-v4:2.0.0'
-    compile 'com.google.auto.value:auto-value:1.2'
-    compile 'com.google.guava:guava:22.0-android'
-    compile 'com.wealthfront:magellan:1.0.0'
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api 'com.android.support:appcompat-v7:28.0.0'
+    api 'com.android.support:design:28.0.0'
+    api 'com.android.support:recyclerview-v7:28.0.0'
+    api 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.0.0'
+    api 'com.jakewharton.rxbinding2:rxbinding-support-v4:2.0.0'
+    api 'com.google.auto.value:auto-value:1.2'
+    api 'com.google.guava:guava:22.0-android'
+    api 'com.wealthfront:magellan:1.0.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
 

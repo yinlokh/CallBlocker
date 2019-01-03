@@ -32,7 +32,6 @@ public class SettingsScreen extends Screen<SettingsView> {
         super.onShow(context);
 
         getView().setWhitelistContactsToggleState(preferences.getWhitelistAllContacts());
-        getView().setPauseBlockingToggleState(preferences.getPauseBlocking());
         subscriptions.add(getView().whitelistContactsToggleChanges()
                 .distinctUntilChanged()
                 .subscribe(
@@ -40,16 +39,6 @@ public class SettingsScreen extends Screen<SettingsView> {
                     @Override
                     public void accept(Boolean toggled) throws Exception {
                         preferences.setWhitelistAllContacts(toggled);
-                    }
-                }
-        ));
-        subscriptions.add(getView().pauseBlockingsToggleChanges()
-                .distinctUntilChanged()
-                .subscribe(
-                new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean toggled) throws Exception {
-                        preferences.setPauseBlocking(toggled);
                     }
                 }
         ));

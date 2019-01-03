@@ -1,6 +1,9 @@
 package callblocker.callblocker.core;
 
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ import com.wealthfront.magellan.Navigator;
 import com.wealthfront.magellan.Screen;
 import com.wealthfront.magellan.ScreenLifecycleListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,8 +33,16 @@ import callblocker.callblocker.common.widget.DrawerRecyclerAdapter;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
+import static android.Manifest.permission.ANSWER_PHONE_CALLS;
+import static android.Manifest.permission.PROCESS_OUTGOING_CALLS;
+import static android.Manifest.permission.READ_CALL_LOG;
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final int PERMISSION_REQUEST_CODE = 2345;
     private static final DrawerOption DRAWER_OPTION_CALL_LOG = DrawerOption.create("Call Log", R.drawable.phone);
     private static final DrawerOption DRAWER_OPTION_FILTERS = DrawerOption.create("Filters", R.drawable.filter);
     private static final DrawerOption DRAWER_OPTION_SETTINGS = DrawerOption.create("Settings", R.drawable.settings);
@@ -99,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onHide(Screen screen) { }
         });
+
+        requestPermissions();
     }
 
     @Override
@@ -129,6 +143,23 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         navigator.onDestroy(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (requestCode != PERMISSION_REQUEST_CODE) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
+        }
+
+       for (int i = 0; i < grantResults.length; i++) {
+            if (grantResults[i] != PERMISSION_GRANTED) {
+                finish();
+            }
+       }
     }
 
     public void showFloatingActionButton(int iconResId) {
@@ -173,5 +204,32 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean drawerEnabled() {
         return drawerEnabledScreens.contains(navigator.currentScreen());
+    }
+
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+
+        List<String> permissions = new ArrayList<>();
+        permissions.add(READ_PHONE_STATE);
+        permissions.add(READ_CALL_LOG);
+        permissions.add(READ_CONTACTS);
+        permissions.add(PROCESS_OUTGOING_CALLS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            permissions.add(ANSWER_PHONE_CALLS);
+        }
+
+        List<String> permissionRequests = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PERMISSION_GRANTED) {
+                permissionRequests.add(permission);
+            }
+        }
+
+        String requestArray[] = new String[permissionRequests.size()];
+        if (!permissionRequests.isEmpty()) {
+            requestPermissions(permissionRequests.toArray(requestArray), PERMISSION_REQUEST_CODE);
+        }
     }
 }
