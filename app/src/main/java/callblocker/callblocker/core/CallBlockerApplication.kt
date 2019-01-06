@@ -19,7 +19,7 @@ class CallBlockerApplication : Application() {
             val notificationChannelManager =
                     getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val notificationChannel = NotificationChannel(
-                    NotificationChannels.PRIORITY_HIGH,"high priority", IMPORTANCE_HIGH)
+                    PRIORITY_HIGH,"high priority", IMPORTANCE_HIGH)
             notificationChannelManager.createNotificationChannel(notificationChannel)
         }
     }
