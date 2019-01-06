@@ -9,7 +9,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.telecom.TelecomManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import java.lang.reflect.Method;
 
@@ -55,17 +54,15 @@ public class CallBroadcastReceiver extends BroadcastReceiver {
             callHistoryStore.addCallHistory(
                     CallHistory.create(System.currentTimeMillis(), incomingNumber, shouldBlock));
             if (shouldBlock) {
-                Log.e("yinlokh", "killing call");
-                killCall(context);
+                endCall(context);
             }
         } catch (Exception e) {
             // do something???
-            Log.e("yinlokh", e.toString());
         }
     }
 
     // Logic copied from stack overflow..
-    private boolean killCall(Context context) {
+    private boolean endCall(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             return endCallAPI28(context);
         } else {
