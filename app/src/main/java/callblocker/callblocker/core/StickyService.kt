@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
-import android.support.v4.content.LocalBroadcastManager
 import android.telephony.TelephonyManager
 import callblocker.callblocker.R
 
@@ -16,6 +15,21 @@ class StickyService : Service(), CallBroadcastReceiver.Listener {
     companion object {
         const val NOTIFICATION_ID = 12321
     }
+
+    private val pausedNotification = NotificationData(
+            R.string.notification_call_blocking_paused,
+            R.drawable.call_received,
+            R.string.notification_action_resume,
+            android.R.drawable.ic_media_play,
+            CallBroadcastReceiver.ACTION_RESUME_BLOCKING
+    )
+    private val resumedNotification = NotificationData(
+            R.string.notification_call_blocking,
+            R.drawable.call_missed,
+            R.string.notification_action_pause,
+            android.R.drawable.ic_media_pause,
+            CallBroadcastReceiver.ACTION_PAUSE_BLOCKING
+    )
 
     private var receiver: CallBroadcastReceiver? = null
 
@@ -55,26 +69,21 @@ class StickyService : Service(), CallBroadcastReceiver.Listener {
 
     private fun buildNotification(paused: Boolean) : Notification {
         val notificationBuilder = NotificationCompat.Builder(this)
-        notificationBuilder.setSmallIcon(R.drawable.call_received)
-        notificationBuilder.setContentTitle(getString(
-                if (paused) R.string.notification_call_blocking_paused
-                else R.string.notification_call_blocking))
-        notificationBuilder.setChannelId(PRIORITY_HIGH)
-
         val activityIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, activityIntent, 0)
         notificationBuilder.setContentIntent(pendingIntent)
 
+        val notificationData = if (paused) pausedNotification else resumedNotification
+        notificationBuilder.setSmallIcon(notificationData.iconResId)
+        notificationBuilder.setContentTitle(getString(notificationData.contentTitleResId))
+        notificationBuilder.setChannelId(PRIORITY_HIGH)
+
         val pauseResumeBroadcast = Intent()
-        pauseResumeBroadcast.action =
-                if (paused) CallBroadcastReceiver.ACTION_RESUME_BLOCKING
-                else CallBroadcastReceiver.ACTION_PAUSE_BLOCKING
+        pauseResumeBroadcast.action = notificationData.action
         val pauseResumeIntent = PendingIntent.getBroadcast(this, 0, pauseResumeBroadcast, 0)
         notificationBuilder.addAction(
-                if (paused) android.R.drawable.ic_media_play else android.R.drawable.ic_media_pause,
-                getString(
-                        if (paused) R.string.notification_action_resume
-                        else R.string.notification_action_pause),
+                notificationData.actionIconResId,
+                getString(notificationData.actionTitleResId),
                 pauseResumeIntent
         )
         return notificationBuilder.build()
